@@ -1,0 +1,655 @@
+Backward1.cpp:
+ 
+/*(Printing a single linked list backward) Include the functions
+reversePrint and recursiveReversePrint, as discussed in this chapter,
+in the class linkedListType. Also, write a program function to print a
+(single) linked list backward. (Use either the class unorderedLinkedList or
+the class orderedLinkedList to test your function.)*/
+ 
+#include<iostream>
+ 
+#include"orderedLinkedList.h"
+#include"linkedListType.h"
+ 
+usingnamespacestd; 
+ 
+int main()
+{
+ 
+// list: 3, 12, 26, 34, 55 
+//should print: 55, 34, 26, 12, 3
+ 
+//variable declarations page 1079
+nodeType *first,*newNode, *current;
+intnum;
+ 
+//page 1080
+ 
+first=NULL; 
+ 
+ 
+cin>>num;               //read and store a new number in num
+newNode = new nodeType; //Create the new node, newNode.
+newNode->info = num;    //Store the item in newNode
+newNode->link = first; //Insert newNode before f irst.
+first = newNode;       //Update the value of the pointer f irst. 
+cin>>num ;            //read the next number
+ 
+ 
+ 
+//outputs the data stored in each node:
+current = first;
+while (current != NULL)
+{
+cout<< current->info <<" ";
+current = current->link;
+}
+ 
+ 
+}
+//buildListBackward
+ 
+nodeType* buildListBackward()
+{                              
+nodeType *first, *newNode;
+int  num;
+cout<<"Enter a list of integers ending with -999."
+<<endl;
+cin>>num;
+first = NULL;
+while (num != -999)
+{
+newNode = new nodeType; //create a node
+newNode->info = num; //store the data in newNode
+newNode->link = first; //put newNode at the beginning
+//of the list
+first = newNode; //update the head pointer of
+//the list, that is, first
+cin>>num; //read the next number
+}
+return first;
+} //end buildListBackward
+ 
+ 
+ 
+ 
+orderedlinkedList.h
+/*(Printing a single linked list backward) Include the functions
+reversePrint and recursiveReversePrint, as discussed in this chapter,
+in the class linkedListType. Also, write a program function to print a
+(single) linked list backward. (Use either the class unorderedLinkedList or
+the class orderedLinkedList to test your function.)*/
+ 
+ 
+#include<iostream>
+#include<cassert>
+Using namespace std;
+ 
+#ifndef H_orderedListType
+#define H_orderedListType
+ 
+ 
+#include"linkedListType.h"
+ 
+template<class Type>
+classorderedLinkedList: publiclinkedListType<Type>
+{
+public:
+bool search(const Type& searchItem) const;
+//Function to determine whether searchItem is in the list.
+//Postcondition: Returns true if searchItem is in the list,
+// otherwise the value false is returned.
+void insert(const Type& newItem);
+//Function to insert newItem in the list.
+//Postcondition: first points to the new list, newItem
+// is inserted at the proper place in the
+// list, and count is incremented by 1.
+voidinsertFirst(const Type&  newItem);
+//Function to insert newItem at the beginning of the list.
+//Postcondition: first points to the new list, newItem is
+// inserted at the proper place in the list,
+// last points to the last node in the
+// list, and count is incremented by 1.
+voidinsertLast(const Type&  newItem);
+//Function to insert newItem at the end of the list.
+//Postcondition: first points to the new list, newItem is
+// inserted at the proper place in the list,
+// last points to the last node in the
+// list, and count is incremented by 1.
+voiddeleteNode(const Type&  deleteItem);
+//Function to delete deleteItem from the list.
+//Postcondition: If found, the node containing
+// deleteItem is deleted from the list;
+// first points to the first node of the
+// new list, and count is decremented by 1.
+// If deleteItem is not in the list, an
+// appropriate message is printed.
+};
+ 
+//search
+template<class Type>
+boolorderedLinkedList<Type>::
+search(const Type  &searchItem) const
+{
+bool found = false;
+nodeType<Type> *current; //pointer to traverse the list
+current = first; //start the search at the first node
+while (current != NULL && !found)
+if (current->info >= searchItem)
+found = true;
+else
+current = current->link;
+if (found)
+found = (current->info == searchItem); //test for equality
+return found;
+}//end search
+ 
+//insert
+template<class Type>
+voidorderedLinkedList<Type>::insert(const Type&newItem)
+{
+nodeType<Type> *current; //pointer to traverse the list
+nodeType<Type> *trailCurrent; //pointer just before current
+nodeType<Type> *newNode; //pointer to create a node
+bool found;
+newNode = newnodeType<Type>; //create the node
+newNode->info = newItem; //store newItem in the node
+newNode->link = NULL; //set the link field of the node
+//to NULL
+if (first == NULL) //Case 1
+{
+first = newNode;
+last = newNode;
+count++;
+}
+else
+{
+current = first;
+found = false;
+while (current != NULL && !found) //search the list
+if (current->info >= newItem)
+found = true;
+else
+{
+trailCurrent = current;
+current = current->link;
+}
+if (current == first) //Case 2
+{
+newNode->link = first;
+first = newNode;
+count++;
+}
+else//Case 3
+{
+trailCurrent->link = newNode;
+newNode->link = current;
+if (current == NULL)
+last = newNode;
+count++;
+}
+}//end else
+}//end insert
+ 
+//insert last and first
+template<class Type>
+voidorderedLinkedList<Type>::insertFirst(const Type&newItem)
+{
+insert(newItem);
+}//end insertFirst
+template<class Type>
+voidorderedLinkedList<Type>::insertLast(const Type&newItem)
+{
+insert(newItem);
+}//end insertLast
+ 
+//delete node
+template<class Type>
+voidorderedLinkedList<Type>::deleteNode(const Type&deleteItem)
+{
+nodeType<Type> *current; //pointer to traverse the list
+nodeType<Type> *trailCurrent; //pointer just before current
+bool found;
+Ordered Linked Lists | 1073
+if (first == NULL) //Case 1
+cout<<"Cannot delete from an empty list."<<endl;
+else
+{
+current = first;
+found = false;
+while (current != NULL && !found) //search the list
+if (current->info >= deleteItem)
+found = true;
+else
+{
+trailCurrent = current;
+current = current->link;
+}
+if (current == NULL) //Case 4
+cout<<"The item to be deleted is not in the "
+<<"list."<<endl;
+else
+if (current->info == deleteItem) //the item to be
+//deleted is in the list
+{
+if (first == current) //Case 2
+{
+first = first->link;
+if (first == NULL)
+last = NULL;
+delete current;
+}
+else//Case 3
+{
+trailCurrent->link = current->link;
+if (current == last)
+last = trailCurrent;
+delete current;
+} count--;
+}
+else//Case 4
+cout<<"The item to be deleted is not in the "
+<<"list."<<endl;
+}
+}//end deleteNode
+ 
+ 
+#endif
+ 
+ 
+Linkedlisttype.h
+ 
+/*(Printing a single linked list backward) Include the functions
+reversePrint and recursiveReversePrint, as discussed in this chapter,
+in the class linkedListType. Also, write a program function to print a
+(single) linked list backward. (Use either the class unorderedLinkedList or
+the class orderedLinkedList to test your function.)*/
+ 
+ 
+#ifndefH_LinkedListType
+#defineH_LinkedListType
+ 
+#include<iostream>
+#include<cassert>
+usingnamespacestd;
+ 
+#include"orderedLinkedList.h"
+ 
+structnodeType
+{
+int info;
+nodeType *link;
+};
+ 
+ 
+//************************
+// class linkedListIterator
+//************************
+ 
+template<class Type>
+classlinkedListIterator
+{
+public:
+linkedListIterator();
+//Default constructor.
+//Postcondition: current = NULL;
+linkedListIterator(nodeType<Type> *ptr);
+//Constructor with a parameter.
+//Postcondition: current = ptr;
+Type operator*();
+//Function to overload the dereferencing operator *.
+//Postcondition: Returns the info contained in the node.
+linkedListIterator<Type>operator++();
+//Overload the pre-increment operator.
+//Postcondition: The iterator is advanced to the next
+// node.
+booloperator==(const linkedListIterator<Type>& right) const;
+//Overload the equality operator.
+//Postcondition: Returns true if this iterator is equal to
+// the iterator specified by right,
+// otherwise it returns false.
+booloperator!=(const linkedListIterator<Type>& right) const;
+//Overload the not equal to operator.
+//Postcondition: Returns true if this iterator is not equal
+// to the iterator specified by right,
+// otherwise it returns false.
+private:
+nodeType<Type> *current; //pointer to point to the current
+//node in the linked list
+};
+ 
+//*********************************
+//Definitons of linkedListIterator
+//*********************************
+ 
+template<class Type>
+linkedListIterator<Type>::linkedListIterator()
+{
+current = NULL;
+}
+template<class Type>
+linkedListIterator<Type>::
+linkedListIterator(nodeType<Type> *ptr)
+{
+current = ptr;
+}
+template<class Type>
+Type linkedListIterator<Type>::operator*()
+{
+return current->info;
+}
+template<class Type>
+linkedListIterator<Type>linkedListIterator<Type>::operator++()
+{
+current = current->link;
+return *this;
+}
+template<class Type>
+boollinkedListIterator<Type>::operator==
+(constlinkedListIterator<Type>& right) const
+{
+return (current == right.current);
+}
+template<class Type>
+boollinkedListIterator<Type>::operator!=
+(constlinkedListIterator<Type>& right) const
+{
+return (current != right.current);
+}
+ 
+ 
+ 
+ 
+ 
+//*************************************
+// class linkedListType page 1086
+//*************************************
+ 
+ 
+template<class Type>
+classlinkedListType
+{
+public:
+constlinkedListType<Type>&operator=
+(constlinkedListType<Type>&);
+//Overload the assignment operator.
+voidinitializeList();
+//Initialize the list to an empty state.
+//Postcondition: first = NULL, last = NULL, count = 0;
+boolisEmptyList() const;
+//Function to determine whether the list is empty.
+//Postcondition: Returns true if the list is empty,
+// otherwise it returns false.
+void print() const;
+//Function to output the data contained in each node.
+//Postcondition: none
+int length() const;
+//Function to return the number of nodes in the list.
+//Postcondition: The value of count is returned.
+voiddestroyList();
+//Function to delete all the nodes from the list.
+//Postcondition: first = NULL, last = NULL, count = 0;
+Type front() const;
+//Function to return the first element of the list.
+//Precondition: The list must exist and must not be
+// empty.
+//Postcondition: If the list is empty, the program
+// terminates; otherwise, the first
+// element of the list is returned.
+Type back() const;
+//Function to return the last element of the list.
+//Precondition: The list must exist and must not be
+// empty.
+//Postcondition: If the list is empty, the program
+// terminates; otherwise, the last
+// element of the list is returned.
+virtual bool search(const Type&searchItem) const = 0;
+//Function to determine whether searchItem is in the list.
+//Postcondition: Returns true if searchItem is in the
+// list, otherwise the value false is
+// returned.
+virtual void insertFirst(const Type&newItem) = 0;
+//Function to insert newItem at the beginning of the list.
+//Postcondition: first points to the new list, newItem is
+// inserted at the beginning of the list,
+// last points to the last node in the list,
+// and count is incremented by 1.
+virtual void insertLast(const Type&newItem) = 0;
+//Function to insert newItem at the end of the list.
+//Postcondition: first points to the new list, newItem
+// is inserted at the end of the list,
+// last points to the last node in the list,
+// and count is incremented by 1.
+virtual void deleteNode(const Type&deleteItem) = 0;
+//Function to delete deleteItem from the list.
+//Postcondition: If found, the node containing
+// deleteItem is deleted from the list.
+// first points to the first node, last
+// points to the last node of the updated
+// list, and count is decremented by 1.
+linkedListIterator<Type> begin();
+//Function to return an iterator at the begining of the
+//linked list.
+//Postcondition: Returns an iterator such that current is
+// set to first.
+linkedListIterator<Type> end();
+//Function to return an iterator one element past the
+//last element of the linked list.
+//Postcondition: Returns an iterator such that current is
+// set to NULL.
+linkedListType();
+//default constructor
+//Initializes the list to an empty state.
+//Postcondition: first = NULL, last = NULL, count = 0;
+linkedListType(constlinkedListType<Type>&otherList);
+//copy constructor
+!linkedListType();
+//destructor
+//Deletes all the nodes from the list.
+//Postcondition: The list object is destroyed.
+protected:
+int count; //variable to store the number of
+//elements in the list
+nodeType<Type> *first; //pointer to the first node of the list
+nodeType<Type> *last; //pointer to the last node of the list
+private:
+void copyList(constlinkedListType<Type>&otherList);
+//Function to make a copy of otherList.
+//Postcondition: A copy of otherList is created and
+// assigned to this list.
+};
+ 
+//definition of the function isEmptyList
+template<class Type>
+bool linkedListType<Type>::isEmptyList() const
+{
+return (first == NULL);
+}
+ 
+//default constructor/initialize list
+template<class Type>
+linkedListType<Type>::linkedListType() //default constructor
+{
+first = NULL;
+last = NULL;
+count = 0;
+}
+ 
+//destroy the list
+template<class Type>
+void linkedListType<Type>::destroyList()
+{
+nodeType<Type> *temp; //pointer to deallocate the memory
+//occupied by the node
+while (first != NULL) //while there are nodes in the list
+{
+temp = first; //set temp to the current node
+first = first->link; //advance first to the next node
+delete temp; //deallocate the memory occupied by temp
+}
+last = NULL; //initialize last to NULL; first has already
+//been set to NULL by the while loop
+count = 0;
+}
+ 
+//initializes the list
+template<class Type>
+void linkedListType<Type>::initializeList()
+{
+destroyList(); //if the list has any nodes, delete them
+}
+ 
+//print the list
+template<class Type>
+void linkedListType<Type>::print() const
+{
+nodeType<Type> *current; //pointer to traverse the list
+current = first; //set current so that it points to
+//the first node
+while (current != NULL) //while more data to print
+{
+cout<< current->info <<" ";
+current = current->link;
+}
+}//end print
+ 
+//lenght of the list
+template<class Type>
+int linkedListType<Type>::length() const
+{
+return count;
+}
+ 
+ 
+//retrive data from the first node
+template<class Type>
+Type linkedListType<Type>::front() const
+{
+assert(first != NULL);
+return first->info; //return the info of the first node
+}//end front
+ 
+//retrieve data from the last node
+ 
+template<class Type>
+Type linkedListType<Type>::back() const
+{
+assert(last != NULL);
+return last->info; //return the info of the last node
+}//end back
+ 
+ 
+//begin and end
+template<class Type>
+linkedListIterator<Type>linkedListType<Type>::begin()
+{
+linkedListIterator<Type> temp(first);
+return temp;
+}
+template<class Type>
+linkedListIterator<Type>linkedListType<Type>::end()
+{
+linkedListIterator<Type> temp(NULL);
+return temp;
+}
+ 
+//copy list
+template<class Type>
+void linkedListType<Type>::copyList
+(constlinkedListType<Type>&otherList)
+{
+nodeType<Type> *newNode; //pointer to create a node
+nodeType<Type> *current; //pointer to traverse the list
+if (first != NULL) //if the list is nonempty, make it empty
+destroyList();
+if (otherList.first == NULL) //otherList is empty
+{
+first = NULL;
+last = NULL;
+count = 0;
+}
+else
+{
+current = otherList.first; //current points to the
+//list to be copied
+count = otherList.count;
+//copy the first node
+first = new nodeType<Type>; //create the node
+first->info = current->info; //copy the info
+first->link = NULL; //set the link field of
+//the node to NULL
+last = first; //make last point to the
+//first node
+current = current->link; //make current point to
+//the next node
+Linked List as an ADT | 1055
+//copy the remaining list
+while (current != NULL)
+{
+newNode = new nodeType<Type>; //create a node
+newNode->info = current->info; //copy the info
+newNode->link = NULL; //set the link of
+//newNode to NULL
+last->link = newNode; //attach newNode after last
+last = newNode; //make last point to
+//the actual last node
+current = current->link; //make current point
+//to the next node
+}//end while
+}//end else
+}//end copyList
+ 
+ 
+//destructor
+template<class Type>
+linkedListType<Type>::~linkedListType() //destructor
+{
+destroyList();
+}
+ 
+//copy constructor
+template<class Type>
+linkedListType<Type>::linkedListType
+(const linkedListType<Type>&otherList)
+{
+first = NULL;
+copyList(otherList);
+}//end copy constructor
+ 
+//overload the assignment operator
+template<class Type>
+const linkedListType<Type>&linkedListType<Type>::operator=
+(const linkedListType<Type>&otherList)
+{
+if (this != &otherList) //avoid self-copy
+{
+copyList(otherList);
+}//end else
+return *this;
+ 
+ 
+//********************
+//reversePrint
+//********************
+ 
+voidlinkedListType<Type>::reversePrint
+(nodeType<Type> *current) const
+{
+if (current != NULL)
+{
+reversePrint(current->link); //print the tail
+cout<< current->info <<" "; //print the node
+}
+}
+ 
+//**********************
+//printListReverse
+//**********************
+voidlinkedListType<Type>::printListReverse() const
+{
+reversePrint(first);
+cout<<endl;
+}
+ 
+} 
+#endif
